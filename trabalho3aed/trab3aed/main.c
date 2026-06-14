@@ -157,7 +157,26 @@ static void busca_por_preco(AVLPreco* avl) {
     printf("--------------------------------------------------------------------------\n");
     printf("MEDIA        |            | %-14.3f |         | %-14.3f |\n",
            soma_avl/N_CONSULTAS, soma_seq/N_CONSULTAS);
-
+    separador();
+    printf("  DEMONSTRACAO DA LISTA DE REGISTROS (Preco > %.2f)\n", valores[0]);
+    separador();
+    
+    if (cnt_avl[0] > 0) {
+        printf("Exibindo os primeiros registos encontrados pela AVL:\n");
+        int limite_exibicao = (cnt_avl[0] < 5) ? cnt_avl[0] : 5; 
+        
+        for(int j = 0; j < limite_exibicao; j++) { 
+             Registro reg;
+             if (arquivo_ler_registro(NOME_ARQUIVO, resultados[j], &reg)) {
+                 registro_imprimir(&reg);
+             }
+        }
+        if (cnt_avl[0] > 5) {
+            printf("... (Omitindo os restantes. Total de %d registos encontrados nesta consulta)\n", cnt_avl[0]);
+        }
+    } else {
+        printf("Nenhum registo encontrado para Preco > %.2f nesta consulta.\n", valores[0]);
+    }
     free(resultados);
 }
 

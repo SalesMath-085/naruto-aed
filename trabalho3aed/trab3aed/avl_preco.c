@@ -89,6 +89,7 @@ int avl_preco_inserir(AVLPreco* idx, float chave, long num_reg) {
 
 static int range_rec(NoAVLPreco* no, char op, float valor, long* res, int max_res, int count) {
     if (!no || count >= max_res) return count;
+    
     int match = 0;
     if (op == '>' && no->chave > valor) match = 1;
     else if (op == '<' && no->chave < valor) match = 1;
@@ -96,13 +97,25 @@ static int range_rec(NoAVLPreco* no, char op, float valor, long* res, int max_re
     else if (op == 'L' && no->chave <= valor) match = 1;
 
     if (op == '>' || op == 'G') {
-        count = range_rec(no->esq, op, valor, res, max_res, count);
-        if (match && count < max_res) res[count++] = no->num_reg;
-        count = range_rec(no->dir, op, valor, res, max_res, count);
-    } else {
-        count = range_rec(no->dir, op, valor, res, max_res, count);
-        if (match && count < max_res) res[count++] = no->num_reg;
-        count = range_rec(no->esq, op, valor, res, max_res, count);
+       
+        if ((op == '>' && no->chave <= valor) || (op == 'G' && no->chave < valor)) {
+            count = range_rec(no->dir, op, valor, res, max_res, count);
+        } else {
+          
+            count = range_rec(no->esq, op, valor, res, max_res, count);
+            if (match && count < max_res) res[count++] = no->num_reg;
+            count = range_rec(no->dir, op, valor, res, max_res, count);
+        }
+    }
+    else { 
+
+        if ((op == '<' && no->chave >= valor) || (op == 'L' && no->chave > valor)) {
+            count = range_rec(no->esq, op, valor, res, max_res, count);
+        } else {
+            count = range_rec(no->dir, op, valor, res, max_res, count);
+            if (match && count < max_res) res[count++] = no->num_reg;
+            count = range_rec(no->esq, op, valor, res, max_res, count);
+        }
     }
     return count;
 }
